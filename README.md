@@ -42,6 +42,11 @@ python Mapic.py
 ![Screenshot1](MaPic2_cover.png)
 
 ## Installation & Running
+
+You can runs easy the Win exe or Linux AppImage:
+https://github.com/Majika007/mapic/release
+
+OR
 1. Install recommended Python 3.11 (higher not tested).
 2. Install dependencies (need to download my requirements.txt): 
 ```bash
