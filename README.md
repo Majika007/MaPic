@@ -24,6 +24,13 @@ MaPic is an advanced image viewer designed for both casual browsing and professi
 ![Screenshot1](MaPic_cover.png)
 
 ## Usage
+
+⚠️ End users: download the **AppImage** or **EXE** from the Releases section.  
+https://github.com/Majika007/MaPic/releases
+
+
+
+The "Source code" archives are for developers.
 1. Launch MaPic:
 ```
 python Mapic.py
