@@ -2,11 +2,11 @@
 Image Viewer + AI Metadata
 
 Author: Majika77
-Date: 2025-12-23
+Date: 2026-01-06
 Description: A lightweight image viewer that displays AI generation metadata alongside images.
 Developed with assistance from ChatGPT (OpenAI GPT-5 mini) :)
 """
-APP_VERSION = "2.4"
+APP_VERSION = "2.45"
 GITHUB_REPO = "Majika007/mapic"
 #!/usr/bin/env python3
 import sys
@@ -513,6 +513,8 @@ def extract_prompts_png(image_path):
             return None
 
         ckpt     = find_key(prompt_json, "ckpt_name") or "-"
+        if ckpt == "-":
+            ckpt     = find_key(prompt_json, "unet_name") or "-"
         sampler  = find_key(prompt_json, "sampler_name") or "-"
         scheduler= find_key(prompt_json, "scheduler") or "-"
         step     = find_key(prompt_json, "steps") or "-"
