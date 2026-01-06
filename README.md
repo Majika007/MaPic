@@ -1,7 +1,11 @@
 # MaPic – Image Viewer and AI Metadata Reader
 
 ## Description
-MaPic is an advanced image viewer designed for both casual browsing and professional use with AI-generated images. It can display images in full size or as thumbnails, and extract AI metadata (prompts, models, LoRAs, seeds, etc.) from PNG and JPG (jpg/jpeg) files created by ComfyUI, A1111, and other AI workflows.
+MaPic is an advanced image viewer for AI-generated images, designed for both casual browsing and professional use.
+It supports full-size viewing and thumbnail browsing, and can extract Stable Diffusion metadata
+including prompts, models, LoRA references, seeds, and other generation parameters.
+MaPic reads metadata from PNG and JPG (jpg/jpeg) files created by ComfyUI, Automatic1111 (A1111),
+and other AI image generation workflows.
 
 ## Features
 - Full-size image viewing with navigation (next/previous) using arrow keys and mouse wheel
