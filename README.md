@@ -24,6 +24,8 @@ and other AI image generation workflows.
 - Supports imageview orientation (landscape/portrait)
 - Automatically loads all images from the folder where MaPic2 was launched. Open folder can change..
 - Copy-to-clipboard icons for prompts and seed (easy-copy)
+- Added support for Z-Image safetensors stored as UNet 
+- Automatic update checks, always suggesting the latest version.
 
 ![Screenshot1](MaPic_cover.png)
 
