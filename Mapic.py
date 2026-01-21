@@ -31,6 +31,7 @@ from PyQt6.QtCore import (
 from PIL import Image
 from threading import Thread
 from collections import namedtuple
+from packaging.version import Version
 import time
 import traceback
 import requests
@@ -45,8 +46,7 @@ def get_latest_version():
     return data["tag_name"].lstrip("v")
 
 def is_newer(latest, current):
-    def v(x): return [int(i) for i in x.split(".")]
-    return v(latest) > v(current)
+    return Version(latest) > Version(current)
 
 class UpdateChecker(QThread):
     update_found = pyqtSignal(str)  # ha új verzió van, elküldi a verziót
