@@ -2,11 +2,11 @@
 Image Viewer + AI Metadata
 
 Author: Majika77
-Date: 2026-01-06
+Date: 2026-01-21
 Description: A lightweight image viewer that displays AI generation metadata alongside images.
 Developed with assistance from ChatGPT (OpenAI GPT-5 mini) :)
 """
-APP_VERSION = "2.45"
+APP_VERSION = "2.5"
 GITHUB_REPO = "Majika007/mapic"
 #!/usr/bin/env python3
 import sys
@@ -20,8 +20,14 @@ from PyQt6.QtWidgets import (
     QTextEdit, QFileDialog, QPushButton, QHBoxLayout, QSplitter, QMainWindow,
     QSizePolicy, QScrollArea, QGridLayout, QStackedWidget, QTextBrowser
 )
-from PyQt6.QtGui import QPixmap, QShortcut, QKeySequence, QPalette, QColor, QIcon, QClipboard, QCursor, QWheelEvent, QAction
-from PyQt6.QtCore import Qt, QTimer, QRect, QPropertyAnimation, QEasingCurve, QPoint, qInstallMessageHandler, QtMsgType, QSettings, pyqtSignal, QThread
+from PyQt6.QtGui import (
+    QPixmap, QShortcut, QKeySequence, QPalette, QColor, QIcon, QClipboard, 
+    QCursor, QWheelEvent, QAction, QDesktopServices
+    )
+from PyQt6.QtCore import (
+    Qt, QTimer, QRect, QPropertyAnimation, QEasingCurve, QPoint, 
+    qInstallMessageHandler, QtMsgType, QSettings, pyqtSignal, QThread, QUrl
+    )
 from PIL import Image
 from threading import Thread
 from collections import namedtuple
@@ -830,6 +836,9 @@ class ImageViewer(QWidget):
         msg.setIcon(QMessageBox.Icon.Information)
         msg.setWindowTitle("Update available")
         msg.setText(f"New version available: {latest_version}\nCurrent: {APP_VERSION}")
+        # Gombok
+        btn_download = msg.addButton("Download", QMessageBox.ButtonRole.AcceptRole)
+        btn_close = msg.addButton("Close", QMessageBox.ButtonRole.RejectRole)
         checkbox = QCheckBox("Don't notify me again")
         msg.setCheckBox(checkbox)
         msg.exec()
@@ -837,6 +846,11 @@ class ImageViewer(QWidget):
         if checkbox.isChecked():
             settings = QSettings("Majika", "MaPic")
             settings.setValue("skip_update_warning", True)
+            # Download gomb kezelése
+        if msg.clickedButton() == btn_download:
+            QDesktopServices.openUrl(
+                QUrl(f"https://github.com/{GITHUB_REPO}/releases/latest")
+            )
 
     def show_up_to_date(self, manual):
         if manual:
@@ -855,7 +869,7 @@ class ImageViewer(QWidget):
             f"MaPic – Majika Picture Viewer\n"
             f"Version: {APP_VERSION}\n\n"
             "AI image metadata viewer\n"
-            "GitHub: github.com/Majika007/MaPic"
+            "GitHub: github.com/{GITHUB_REPO}"
         )
     def wheelEvent(self, event: QWheelEvent):
         delta = event.angleDelta().y()
@@ -1197,7 +1211,7 @@ if __name__ == "__main__":
     w.setWindowIcon(QIcon("MaPic.ico"))
     w.resize(1000, 850)
     if len(sys.argv) > 1:
-        debug_log("Path -------- ", sys.argv)
+#        debug_log("Path -------- ", sys.argv)
         fname = os.path.abspath(sys.argv[1])
         w.open_folder_and_select(fname)
     w.show()
