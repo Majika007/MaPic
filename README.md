@@ -8,7 +8,7 @@ MaPic reads metadata from PNG and JPG (jpg/jpeg) files created by ComfyUI, Autom
 and other AI image generation workflows.
 
 ## Features
-- Full-size image viewing with navigation (next/previous) using arrow keys and mouse wheel
+- Full-size image viewing with navigation (next/previous) using arrow keys and mouse wheel (can be switching off/on)
 - Scrollable thumbnail grid, dynamically adjusted to window size
 - Caching of thumbnails for faster browsing
 - Extraction of AI-generated metadata:
@@ -27,13 +27,46 @@ and other AI image generation workflows.
 - Added support for Z-Image safetensors stored as UNet 
 - Automatic update checks, always suggesting the latest version.
 
+### 🔍 Advanced Zoom & Navigation
+- **Zoom to Cursor** - CTRL + Mouse Wheel zooms exactly where your cursor is
+- **Smart Zoom Levels** - 10% to 500% range with smooth 15% increments
+- **Fit-to-Window** - Automatic zoom synchronization
+- **Panning** - Middle mouse button drag when zoomed (only when scrollbars visible)
+
 ![Screenshot1](MaPic_cover.png)
+
+## ⌨️ Keyboard Shortcuts
+
+### Navigation
+- `←` / `→` - Previous/Next image
+- `↑` / `↓` - Previous/Next image
+- **Mouse Wheel** - Navigate images (can be disabled in Settings)
+- **`F5`** - Refresh folder (reload image list)
+
+### Zoom & View
+- **`CTRL` + Mouse Wheel** - Zoom in/out at cursor position
+- **`CTRL` + `+`** - Zoom in (center)
+- **`CTRL` + `-`** - Zoom out (center)
+- **`CTRL` + `0`** - Reset zoom to 100%
+
+### Mouse Controls
+- **Left Click** (on image) - Open thumbnail grid
+- **Middle Mouse + Drag** - Pan/move image (when zoomed and scrollbars visible)
+
+---
+
+## 🎨 Features in Detail
+
+### Zoom System
+- **Cursor-based Zoom** - Image zooms toward your mouse cursor, not the center
+- **Smart Fit-to-Window** - Zoom level automatically adjusts to actual display size
+- **Consistent Steps** - Always 15% increments, no random jumps
+- **Auto-disable Panning** - Pan only works when image is larger than viewport
 
 ## Usage
 
 ⚠️ End users: download the **AppImage** or **EXE** from the Releases section.  
 https://github.com/Majika007/MaPic/releases
-
 
 
 The "Source code" archives are for developers.
@@ -81,6 +114,30 @@ sudo apt install exiftool   # Linux
 python Mapic.py
 ```
 
+### Settings Persistence
+All settings saved in QSettings (cross-platform):
+- Window size and position
+- Splitter orientation (horizontal/vertical)
+- Splitter size ratios
+- Mouse wheel scroll enabled/disabled
+- Update notification preferences
+
+**Location:**
+- **Linux:** `~/.config/Majika/MaPic.conf`
+- **Windows:** Registry (`HKEY_CURRENT_USER\Software\Majika\MaPic`)
+
+---
+
+## 🔧 Settings
+
+Access via: **Settings → Preferences...**
+
+Currently available:
+- ✅ **Enable mouse wheel scroll** - Toggle wheel navigation on/off
+
+---
+
+
 ## Author
-Developed by **Majika77** with assistance from *ChatGPT (OpenAI GPT-5 mini)*
+Developed by **Majika77** with assistance from *ChatGPT (OpenAI GPT-5 mini)* and Claude (Anthropic Sonnet 4.5)
 
