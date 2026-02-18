@@ -34,7 +34,7 @@ and other AI image generation workflows.
 - **Smart Zoom Levels** - 10% to 500% range with smooth 15% increments
 - **Panning** - Middle mouse button drag when zoomed
 
-![Screenshot1](MaPic_cover.png)
+![Screenshot1](MaPic_cover3.png)
 
 ## ⌨️ Keyboard Shortcuts
 
