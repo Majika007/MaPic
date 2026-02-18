@@ -81,7 +81,7 @@ python MaPic.py
 ## Installation & Running
 
 You can runs easy the Win exe or Linux AppImage:
-https://github.com/Majika007/mapic/release
+https://github.com/Majika007/MaPic/releases
 
 OR
 1. Install recommended Python 3.11 (higher not tested).
