@@ -9,8 +9,6 @@ and other AI image generation workflows.
 
 ## Features
 - Full-size image viewing with navigation (next/previous) using arrow keys and mouse wheel (can be switching off/on)
-- Scrollable thumbnail grid, dynamically adjusted to window size
-- Caching of thumbnails for faster browsing
 - Extraction of AI-generated metadata:
   - Prompt / Negative prompt
   - Model / Checkpoint
@@ -19,19 +17,20 @@ and other AI image generation workflows.
   - Multiple LoRAs with weights (supports `<lora:name:weight>` and JSON formats)
 - Support for both PNG parameters and JPG UserComment metadata
 - Responsive GUI with PyQt6
+- Scrollable thumbnail grid, dynamically adjusted to window size
+- Caching of thumbnails for faster browsing
 - Dark/Light mode, automatically detects system theme
 - Save metadata to TXT files
 - Supports imageview orientation (landscape/portrait)
-- Automatically loads all images from the folder where MaPic2 was launched. Open folder can change..
+- Automatically loads all images from the folder where MaPic2 was launched. 'Open folder' can change..
 - Copy-to-clipboard icons for prompts and seed (easy-copy)
-- Added support for Z-Image safetensors stored as UNet 
+- Added support for Z-Image safetensors (stored as UNet)
 - Automatic update checks, always suggesting the latest version.
 
 ### 🔍 Advanced Zoom & Navigation
 - **Zoom to Cursor** - CTRL + Mouse Wheel zooms exactly where your cursor is
 - **Smart Zoom Levels** - 10% to 500% range with smooth 15% increments
-- **Fit-to-Window** - Automatic zoom synchronization
-- **Panning** - Middle mouse button drag when zoomed (only when scrollbars visible)
+- **Panning** - Middle mouse button drag when zoomed
 
 ![Screenshot1](MaPic_cover.png)
 
@@ -55,14 +54,6 @@ and other AI image generation workflows.
 
 ---
 
-## 🎨 Features in Detail
-
-### Zoom System
-- **Cursor-based Zoom** - Image zooms toward your mouse cursor, not the center
-- **Smart Fit-to-Window** - Zoom level automatically adjusts to actual display size
-- **Consistent Steps** - Always 15% increments, no random jumps
-- **Auto-disable Panning** - Pan only works when image is larger than viewport
-
 ## Usage
 
 ⚠️ End users: download the **AppImage** or **EXE** from the Releases section.  
@@ -72,7 +63,7 @@ https://github.com/Majika007/MaPic/releases
 The "Source code" archives are for developers.
 1. Launch MaPic:
 ```
-python Mapic.py
+python MaPic.py
 ```
 2. Open a folder of images:
    - Click the **Open Folder** button in the interface.
@@ -108,7 +99,7 @@ pip install exifread
 ```
 sudo apt install exiftool   # Linux
 ```
-4. Download or clone MaPic repository: Mapic.py, MaPic.ico, requirements.txt, Readme.md
+4. Download or clone MaPic repository: MaPic.py, MaPic.ico, requirements.txt, and ui folder
 5. Run:
 ```
 python Mapic.py

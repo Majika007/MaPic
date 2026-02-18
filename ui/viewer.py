@@ -10,7 +10,7 @@ from PyQt6.QtWidgets import (
 from PyQt6.QtGui import QPixmap, QShortcut, QKeySequence, QIcon, QWheelEvent, QAction, QDesktopServices
 from PyQt6.QtCore import Qt, QTimer, pyqtSignal, QUrl
 
-from .metadata import extract_prompts, ImageMeta, empty_meta
+from metadata import extract_prompts, ImageMeta, empty_meta
 from .styles import STYLE_DARK, STYLE_LIGHT, is_system_dark, get_setting, set_setting
 from .widgets import ClickableLabel, ToastMessage, ZoomScrollArea
 from .dialogs import SettingsDialog
@@ -22,6 +22,13 @@ class ImageViewer(QMainWindow):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setWindowTitle("MaPic - Majika Picture Viewer")
+        
+        # Verzió tárolása osztály változóként (exe kompatibilitás)
+        try:
+            from MaPic import APP_VERSION
+            self.app_version = APP_VERSION
+        except ImportError:
+            self.app_version = "2.7"
         
         # Állapot változók
         self.image_files = []
@@ -225,15 +232,24 @@ class ImageViewer(QMainWindow):
     
     def start_update_check(self, manual=False):
         """Frissítés ellenőrzése háttérben"""
-        from MaPic import UpdateChecker, APP_VERSION, GITHUB_REPO
-        self.update_thread = UpdateChecker(manual=manual)
-        self.update_thread.update_found.connect(lambda v: self.show_update_popup(v, manual))
-        self.update_thread.up_to_date.connect(lambda: self.show_up_to_date(manual))
-        self.update_thread.start()
+        try:
+            from MaPic import UpdateChecker
+            self.update_thread = UpdateChecker(manual=manual)
+            self.update_thread.update_found.connect(lambda v: self.show_update_popup(v, manual))
+            self.update_thread.up_to_date.connect(lambda: self.show_up_to_date(manual))
+            self.update_thread.start()
+        except Exception as e:
+            if manual:
+                QMessageBox.warning(self, "Update Check Failed", f"Could not check for updates: {e}")
     
     def show_update_popup(self, latest_version, manual):
         """Frissítési popup ablak"""
-        from MaPic import APP_VERSION, GITHUB_REPO
+        try:
+            from MaPic import GITHUB_REPO
+            github_repo = GITHUB_REPO
+        except ImportError:
+            github_repo = "Majika007/MaPic"
+        
         from PyQt6.QtWidgets import QCheckBox
         from PyQt6.QtCore import QSettings
         
@@ -242,7 +258,7 @@ class ImageViewer(QMainWindow):
         msg = QMessageBox(self)
         msg.setIcon(QMessageBox.Icon.Information)
         msg.setWindowTitle("Update available")
-        msg.setText(f"New version available: {latest_version}\nCurrent: {APP_VERSION}")
+        msg.setText(f"New version available: {latest_version}\nCurrent: {self.app_version}")
         
         btn_download = msg.addButton("Download", QMessageBox.ButtonRole.AcceptRole)
         btn_close = msg.addButton("Close", QMessageBox.ButtonRole.RejectRole)
@@ -259,7 +275,7 @@ class ImageViewer(QMainWindow):
         settings.setValue("skip_update_warning", checkbox.isChecked())
         
         if msg.clickedButton() == btn_download:
-            QDesktopServices.openUrl(QUrl(f"https://github.com/{GITHUB_REPO}/releases/latest"))
+            QDesktopServices.openUrl(QUrl(f"https://github.com/{github_repo}/releases/latest"))
     
     def show_up_to_date(self, manual):
         """Naprakész verzió üzenet"""
@@ -268,12 +284,11 @@ class ImageViewer(QMainWindow):
     
     def show_about(self):
         """About dialog"""
-        from MaPic import APP_VERSION
         QMessageBox.information(
             self,
             "About MaPic",
             f"MaPic – Majika Picture Viewer\n"
-            f"Version: {APP_VERSION}\n\n"
+            f"Version: {self.app_version}\n\n"
             "AI image metadata viewer\n"
             "GitHub: github.com/Majika007/MaPic"
         )
