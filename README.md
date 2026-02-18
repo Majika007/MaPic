@@ -134,6 +134,8 @@ Currently available:
 
 Quick search and filtering – e.g. by prompt keywords, model name, seed, etc.
 
+---
+
 ![Screenshot1](Screenshot_2026-02-18.png)
 
 ## Author
