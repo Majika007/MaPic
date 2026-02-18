@@ -26,12 +26,12 @@ and other AI image generation workflows.
 - Supports imageview orientation (landscape/portrait)
 - Automatically loads all images from the folder where MaPic2 was launched. 'Open folder' can change..
 - Copy-to-clipboard icons for prompts and seed (easy-copy)
-- Added support for Z-Image safetensors (stored as UNet)
+- Added support for Z-Image safetensors
 - Automatic update checks, always suggesting the latest version.
 
 ### 🔍 Advanced Zoom & Navigation
 - **Zoom to Cursor** - CTRL + Mouse Wheel zooms exactly where your cursor is
-- **Smart Zoom Levels** - 10% to 500% range with smooth 15% increments
+- **Smart Zoom Levels** - 10% to 500% range
 - **Panning** - Middle mouse button drag when zoomed
 
 ![Screenshot1](MaPic_cover3.png)
@@ -130,6 +130,11 @@ Currently available:
 
 ---
 
+## 🚀 Planned Features
+
+Quick search and filtering – e.g. by prompt keywords, model name, seed, etc.
+
+![Screenshot1](Screenshot_2026-02-18.png)
 
 ## Author
 Developed by **Majika77** with assistance from *ChatGPT (OpenAI GPT-5 mini)* and Claude (Anthropic Sonnet 4.5)
