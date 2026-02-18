@@ -7,6 +7,9 @@ including prompts, models, LoRA references, seeds, and other generation paramete
 MaPic reads metadata from PNG and JPG (jpg/jpeg) files created by ComfyUI, Automatic1111 (A1111),
 and other AI image generation workflows.
 
+Your support means the world! Every tip helps me improve my setup and create more amazing AI programs.
+**Show some love here: https://ko-fi.com/majika77**
+
 ![Screenshot1](MaPic2-7cover.png)
 
 ## Features
