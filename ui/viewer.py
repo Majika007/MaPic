@@ -10,7 +10,7 @@ from PyQt6.QtWidgets import (
 from PyQt6.QtGui import QPixmap, QShortcut, QKeySequence, QIcon, QWheelEvent, QAction, QDesktopServices
 from PyQt6.QtCore import Qt, QTimer, pyqtSignal, QUrl
 
-from metadata import extract_prompts, ImageMeta, empty_meta
+from .metadata import extract_prompts, ImageMeta, empty_meta
 from .styles import STYLE_DARK, STYLE_LIGHT, is_system_dark, get_setting, set_setting
 from .widgets import ClickableLabel, ToastMessage, ZoomScrollArea
 from .dialogs import SettingsDialog

@@ -3,7 +3,7 @@
 Image Viewer + AI Metadata
 
 Author: Majika77
-Date: 2026-02-15
+Date: 2026-03-29
 Description: A lightweight image viewer that displays AI generation metadata alongside images.
 Developed with assistance from ChatGPT (OpenAI GPT-5 mini) & Claude (Anthropic) :)
 """
@@ -23,7 +23,7 @@ from PyQt6.QtWidgets import QApplication
 from PyQt6.QtGui import QIcon
 
 # ============ Config ============
-APP_VERSION = "2.7"
+APP_VERSION = "2.8"
 GITHUB_REPO = "Majika007/MaPic"
 DEBUG = False
 

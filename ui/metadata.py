@@ -1,11 +1,9 @@
 """
 Metadata extraction module for AI-generated images
-Supports PNG, JPG, JPEG, WebP formats
+Supports PNG, JPG, JPEG formats
 """
 import json
 import re
-import html
-import unicodedata
 import subprocess
 import os
 from PIL import Image
@@ -74,7 +72,7 @@ def extract_loras_from_usercomment(raw_uc):
             raw_text = str(raw_uc)
 
     try:
-        matches = re.findall(r'\{[^\}]*"type"\s*:\s*"lora"[^\}]*\}', raw_text)
+        matches = re.findall(r'\{[^}]*"type"\s*:\s*"lora"[^}]*}', raw_text)
         for m in matches:
             try:
                 d = json.loads(m)
@@ -299,6 +297,7 @@ def extract_prompts_png(image_path):
         metadata = img.info
 
         raw_prompt = metadata.get("prompt") or metadata.get("parameters") or metadata.get("Description") or metadata.get("comment") or None
+        # print("[DEBUG RAW]", raw_prompt)
         if not raw_prompt:
             return empty_meta()
 
@@ -306,18 +305,55 @@ def extract_prompts_png(image_path):
         try:
             prompt_json = json.loads(raw_prompt)
         except Exception:
-            # Nem JSON, sima szöveg
+            # Nem JSON, lehet A1111 szöveges formátum
             text_all = str(raw_prompt)
-            text_all = " ".join(text_all.split())
-            meta = empty_meta()
-            return meta._replace(prompt=text_all)
+            print("[DEBUG TEXT]", text_all)
+            # A1111 formátum detektálása (van benne "Steps:")
+            if "Steps:" in text_all or "steps:" in text_all:
+                # A1111 regex parsing
+                pos_match = re.search(r'^(.*?)\s*Negative prompt:', text_all, re.DOTALL)
+                neg_match = re.search(r'Negative prompt:\s*(.*?)\s*Steps:', text_all, re.DOTALL)
+                
+                pos = pos_match.group(1).strip() if pos_match else text_all.split("Steps:")[0].strip()
+                neg = neg_match.group(1).strip() if neg_match else "N/A"
+                
+                step_match = re.search(r'Steps:\s*(\d+)', text_all)
+                sampler_match = re.search(r'Sampler:\s*([^,\n]+)', text_all)
+                cfg_match = re.search(r'CFG scale:\s*([\d.]+)', text_all)
+                seed_match = re.search(r'Seed:\s*(\d+)', text_all)
+                ckpt_match = re.search(r'Model:\s*([^,\n]+)', text_all)
+                scheduler_match = re.search(r'Scheduler:\s*([^,\n]+)', text_all)
+                
+                ckpt = ckpt_match.group(1).strip() if ckpt_match else "-"
+                # Checkpoint név tisztítása
+                if ckpt != "-":
+                    ckpt = os.path.basename(ckpt)
+                
+                return ImageMeta(
+                    prompt=pos,
+                    neg_prompt=neg,
+                    model=ckpt,
+                    sampler=sampler_match.group(1).strip() if sampler_match else "-",
+                    scheduler=scheduler_match.group(1).strip() if scheduler_match else "-",
+                    steps=step_match.group(1) if step_match else "-",
+                    cfg_scale=cfg_match.group(1) if cfg_match else "-",
+                    seed=seed_match.group(1) if seed_match else "-",
+                    denoise="-",
+                    vae="-",
+                    loras=extract_loras(text_all)
+                )
+            else:
+                # Sima szöveg, nincs struktúra
+                text_all = " ".join(text_all.split())
+                meta = empty_meta()
+                return meta._replace(prompt=text_all)
 
         # Text mezők gyűjtése
         texts = []
         def collect_texts(obj):
             if isinstance(obj, dict):
                 for k, v in obj.items():
-                    if k == "text" and isinstance(v, str):
+                    if k == "text" and isinstance(v, str) and len(v) > 1:
                         texts.append(v)
                     else:
                         collect_texts(v)
@@ -388,12 +424,9 @@ def extract_prompts(fname):
         img = Image.open(fname)
         metadata = img.info
 
-        if "prompt" in metadata:
-            return extract_prompts_png(fname)
-        elif "parameters" in metadata:
+        if "parameters" in metadata:
             # A1111 formátum
             raw = metadata["parameters"]
-
             pos = re.search(r'^(.*?)\s*,?\s*Negative prompt:', raw, re.DOTALL)
             neg = re.search(r'Negative prompt:\s*(.*?)\s*,?\s*Steps:', raw)
             sampler = re.search(r'Sampler:\s*(.*?)(?=,|$)', raw)
@@ -405,7 +438,6 @@ def extract_prompts(fname):
             denoise = re.search(r'Denoising strength:\s*(.*?)(?=,|$)', raw)
             vae = re.search(r'VAE:\s*(.*?)(?=,|$)', raw)
             loras = extract_loras(raw)
-
             pos = pos.group(1).replace("\n", " ") if pos else "N/A"
             neg = neg.group(1).replace("\n", " ") if neg else "N/A"
             ckpt = ckpt.group(1) if ckpt else "-"
@@ -435,6 +467,8 @@ def extract_prompts(fname):
                 vae=vae,
                 loras=loras
             )
+        elif "prompt" in metadata:
+            return extract_prompts_png(fname)
         else:
             return empty_meta()
 
