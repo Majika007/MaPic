@@ -2,19 +2,23 @@
 Main ImageViewer class
 """
 import os
+
+from PyQt6.QtCore import Qt, QTimer, pyqtSignal, QUrl
+from PyQt6.QtGui import QPixmap, QShortcut, QKeySequence, QWheelEvent, QAction, QDesktopServices
 from PyQt6.QtWidgets import (
-    QWidget, QVBoxLayout, QLabel, QMessageBox, QFileDialog, 
-    QPushButton, QHBoxLayout, QSplitter, QMainWindow, QSizePolicy, 
+    QWidget, QVBoxLayout, QLabel, QMessageBox, QFileDialog,
+    QPushButton, QHBoxLayout, QSplitter, QMainWindow, QSizePolicy,
     QScrollArea, QGridLayout, QStackedWidget, QTextBrowser, QApplication, QDialog
 )
-from PyQt6.QtGui import QPixmap, QShortcut, QKeySequence, QIcon, QWheelEvent, QAction, QDesktopServices
-from PyQt6.QtCore import Qt, QTimer, pyqtSignal, QUrl
 
+from config import APP_VERSION, GITHUB_REPO
+from .dialogs import SettingsDialog
 from .metadata import extract_prompts, ImageMeta, empty_meta
 from .styles import STYLE_DARK, STYLE_LIGHT, is_system_dark, get_setting, set_setting
-from .widgets import ClickableLabel, ToastMessage, ZoomScrollArea
-from .dialogs import SettingsDialog
 from .thumbnails import ThumbnailManager
+from .widgets import ClickableLabel, ToastMessage, ZoomScrollArea
+
+
 
 class ImageViewer(QMainWindow):
     cache_progress = pyqtSignal(int, int)  # (current, total) thumbnail cache progress
@@ -22,14 +26,7 @@ class ImageViewer(QMainWindow):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setWindowTitle("MaPic - Majika Picture Viewer")
-        
-        # Verzió tárolása osztály változóként (exe kompatibilitás)
-        try:
-            from MaPic import APP_VERSION
-            self.app_version = APP_VERSION
-        except ImportError:
-            self.app_version = "2.7"
-        
+
         # Állapot változók
         self.image_files = []
         self.current_index = -1
@@ -39,6 +36,7 @@ class ImageViewer(QMainWindow):
         # Rendszer téma detektálása
         try:
             self.dark_mode = is_system_dark()
+            self._apply_palette()
         except Exception:
             self.dark_mode = False
         
@@ -244,12 +242,7 @@ class ImageViewer(QMainWindow):
     
     def show_update_popup(self, latest_version, manual):
         """Frissítési popup ablak"""
-        try:
-            from MaPic import GITHUB_REPO
-            github_repo = GITHUB_REPO
-        except ImportError:
-            github_repo = "Majika007/MaPic"
-        
+
         from PyQt6.QtWidgets import QCheckBox
         from PyQt6.QtCore import QSettings
         
@@ -258,7 +251,7 @@ class ImageViewer(QMainWindow):
         msg = QMessageBox(self)
         msg.setIcon(QMessageBox.Icon.Information)
         msg.setWindowTitle("Update available")
-        msg.setText(f"New version available: {latest_version}\nCurrent: {self.app_version}")
+        msg.setText(f"New version available: {latest_version}\nCurrent: {APP_VERSION}")
         
         btn_download = msg.addButton("Download", QMessageBox.ButtonRole.AcceptRole)
         btn_close = msg.addButton("Close", QMessageBox.ButtonRole.RejectRole)
@@ -275,7 +268,7 @@ class ImageViewer(QMainWindow):
         settings.setValue("skip_update_warning", checkbox.isChecked())
         
         if msg.clickedButton() == btn_download:
-            QDesktopServices.openUrl(QUrl(f"https://github.com/{github_repo}/releases/latest"))
+            QDesktopServices.openUrl(QUrl(f"https://github.com/{GITHUB_REPO}/releases/latest"))
     
     def show_up_to_date(self, manual):
         """Naprakész verzió üzenet"""
@@ -288,7 +281,7 @@ class ImageViewer(QMainWindow):
             self,
             "About MaPic",
             f"MaPic – Majika Picture Viewer\n"
-            f"Version: {self.app_version}\n\n"
+            f"Version: {APP_VERSION}\n\n"
             "AI image metadata viewer\n"
             "GitHub: github.com/Majika007/MaPic"
         )
@@ -647,10 +640,53 @@ class ImageViewer(QMainWindow):
         self.cache_label.setText(f"Thumbnail cache: {current} / {total}")
     
     # ============ További funkciók ============
-    
+    def _apply_palette(self):
+        """Style és palette alkalmazása dark/light mód szerint"""
+        from PyQt6.QtGui import QPalette, QColor
+        from PyQt6.QtWidgets import QStyleFactory
+
+        if self.dark_mode:
+            # Dark mode: Fusion style + dark palette
+            QApplication.instance().setStyle(QStyleFactory.create("Fusion"))
+
+            palette = QPalette()
+            palette.setColor(QPalette.ColorRole.Window, QColor(53, 53, 53))
+            palette.setColor(QPalette.ColorRole.WindowText, QColor(255, 255, 255))
+            palette.setColor(QPalette.ColorRole.Base, QColor(35, 35, 35))
+            palette.setColor(QPalette.ColorRole.AlternateBase, QColor(53, 53, 53))
+            palette.setColor(QPalette.ColorRole.ToolTipBase, QColor(25, 25, 25))
+            palette.setColor(QPalette.ColorRole.ToolTipText, QColor(255, 255, 255))
+            palette.setColor(QPalette.ColorRole.Text, QColor(255, 255, 255))
+            palette.setColor(QPalette.ColorRole.Button, QColor(53, 53, 53))
+            palette.setColor(QPalette.ColorRole.ButtonText, QColor(255, 255, 255))
+            palette.setColor(QPalette.ColorRole.BrightText, QColor(255, 0, 0))
+            palette.setColor(QPalette.ColorRole.Link, QColor(42, 130, 218))
+            palette.setColor(QPalette.ColorRole.Highlight, QColor(42, 130, 218))
+            palette.setColor(QPalette.ColorRole.HighlightedText, QColor(35, 35, 35))
+
+            # Disabled állapot
+            palette.setColor(QPalette.ColorGroup.Disabled, QPalette.ColorRole.WindowText, QColor(127, 127, 127))
+            palette.setColor(QPalette.ColorGroup.Disabled, QPalette.ColorRole.Text, QColor(127, 127, 127))
+            palette.setColor(QPalette.ColorGroup.Disabled, QPalette.ColorRole.ButtonText, QColor(127, 127, 127))
+
+            QApplication.instance().setPalette(palette)
+        else:
+            # Light mode: Natív rendszer style
+            # Windows-on "windowsvista", Linux-on "fusion" vagy natív
+            import sys
+            if sys.platform == "win32":
+                QApplication.instance().setStyle(QStyleFactory.create("windowsvista"))
+            else:
+                # Linux/Mac: használjuk az alapértelmezett natív style-t
+                QApplication.instance().setStyle(QStyleFactory.create("Fusion"))
+
+            # Natív palette visszaállítása (rendszer színek)
+            QApplication.instance().setPalette(QApplication.style().standardPalette())
+
     def toggle_theme(self):
         """Téma váltása"""
         self.dark_mode = not self.dark_mode
+        self._apply_palette()
         if self.image_files and 0 <= self.current_index < len(self.image_files):
             self.show_image(self.image_files[self.current_index])
         else:

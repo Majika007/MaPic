@@ -3,7 +3,7 @@
 Image Viewer + AI Metadata
 
 Author: Majika77
-Date: 2026-03-29
+Date: 2026-05-18
 Description: A lightweight image viewer that displays AI generation metadata alongside images.
 Developed with assistance from ChatGPT (OpenAI GPT-5 mini) & Claude (Anthropic) :)
 """
@@ -13,19 +13,17 @@ import traceback
 import requests
 from packaging.version import Version
 
+from config import DEBUG, GITHUB_REPO, APP_VERSION
+from ui import ImageViewer
+
 # Biztosítjuk hogy a script könyvtára benne van a Python path-ban
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 if SCRIPT_DIR not in sys.path:
     sys.path.insert(0, SCRIPT_DIR)
 
-from PyQt6.QtCore import QSettings, pyqtSignal, QThread, qInstallMessageHandler, QtMsgType
+from PyQt6.QtCore import QSettings, pyqtSignal, QThread, qInstallMessageHandler
 from PyQt6.QtWidgets import QApplication
 from PyQt6.QtGui import QIcon
-
-# ============ Config ============
-APP_VERSION = "2.8"
-GITHUB_REPO = "Majika007/MaPic"
-DEBUG = False
 
 # ============ Settings ============
 settings = QSettings("Majika", "MaPic")
@@ -104,16 +102,6 @@ class UpdateChecker(QThread):
             print("Update check failed:", e)
 
 # ============ Main Application ============
-
-# Import UI modul (a __main__ blokk előtt, hogy biztosan betöltődjön)
-try:
-    from ui import ImageViewer
-except ImportError as e:
-    print(f"ERROR: Cannot import ui module: {e}")
-    print(f"Current directory: {os.getcwd()}")
-    print(f"Script directory: {os.path.dirname(os.path.abspath(__file__))}")
-    print(f"sys.path: {sys.path[:3]}...")
-    sys.exit(1)
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
